@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام الماستر المتقدم - الأنماط المتقدمة (مصحح)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #131722;
+      --card-color: #1e222d;
+      --input-bg: #2a2e39;
+      --text-color: #d1d4dc;
+      --text-muted: #787b86;
+      --border-color: #363a45;
+      --accent-color: #2962ff;
+      --green-color: #089981;
+      --red-color: #f23645;
+      --gold-color: #f7b924;
+      --purple-color: #9c27b0;
+      --cyan-color: #00bcd4;
+      --teal-color: #009688;
+    }
+
+    body { 
+      font-family: 'Tajawal', sans-serif; 
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
+    
+    .card { 
+      background: var(--card-color); 
+      border-radius: 16px; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
+      padding: 24px; 
+      margin-bottom: 24px; 
+      border: 1px solid var(--border-color); 
+    }
+    
+    .gann-badge { 
+      font-size: 0.75rem; 
+      padding: 2px 8px; 
+      border-radius: 4px; 
+      font-weight: bold; 
+      display: inline-block; 
+      margin-left: 5px; 
+    }
+    
+    .bg-gold { 
+      background-color: rgba(247, 185, 36, 0.15); 
+      color: var(--gold-color); 
+      border: 1px solid rgba(247, 185, 36, 0.3); 
+    }
+    
+    .bg-green-soft { 
+      background: rgba(8, 153, 129, 0.15); 
+      color: var(--green-color); 
+    }
+    
+    .bg-red-soft { 
+      background: rgba(242, 54, 69, 0.15); 
+      color: var(--red-color); 
+    }
+    
+    .elliott-badge { 
+      background: rgba(41, 98, 255, 0.15); 
+      color: var(--accent-color); 
+    }
+    
+    .chart-container {
+      background: var(--bg-color); 
+      border: 1px solid var(--border-color);
+      border-radius: 8px; 
+      padding: 20px; 
+      margin-bottom: 15px; 
+      height: 300px;
+      position: relative;
+    }
+    
+    .wave-progress {
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 3px;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+    
+    .wave-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-color), var(--purple-color));
+      border-radius: 3px;
+      transition: width 0.5s;
+    }
+    
+    .targets-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .target-item {
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-color);
+    }
+    
+    .confluence-note {
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--bg-color);
+      border-radius: 8px;
+      border-right: 3px solid var(--accent-color);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    
+    .pattern-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    
+    .pattern-name {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    .completion-status {
+      font-size: 14px;
+      color: var(--gold-color);
+    }
+    
+    input, textarea {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(41, 98, 255, 0.2);
+    }
+    
+    .signature {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 14px;
+      position: relative;
+    }
+    
+    .signature::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent-color), var(--purple-color));
+    }
+    
+    .signature-text {
+      font-weight: bold;
+      color: var(--accent-color);
+      margin: 0 5px;
+    }
+    
+    .signature-year {
+      color: var(--gold-color);
+      font-weight: bold;
+    }
+    
+    .scenario-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: var(--bg-color);
+    }
+    
+    .scenario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .confidence-badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .target-list {
+      margin-top: 10px;
+      padding-right: 10px;
+    }
+    
+    .target-item-small {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* أنماط جديدة للألوان */
+    .bg-cyan-soft {
+      background: rgba(0, 188, 212, 0.15);
+      color: var(--cyan-color);
+    }
+
+    .bg-teal-soft {
+      background: rgba(0, 150, 136, 0.15);
+      color: var(--teal-color);
+    }
+
+    .bg-yellow-soft {
+      background: rgba(255, 193, 7, 0.15);
+      color: var(--gold-color);
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <div class="max-w-6xl mx-auto">
+    <header class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-white mb-2">نظام "الماستر" للتحليل الرقمي</h1>
+      <p class="text-gray-400 text-lg">دمج علوم ويليام جان مع الهارمونيك وموجات إليوت الذكية + الأنماط المتقدمة</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div class="card lg:col-span-2">
+        <label class="block text-gray-300 font-bold mb-2 text-sm">1. بيانات السوق (CSV):</label>
+        <textarea id="dataInput" class="w-full h-40 p-3 border rounded-lg text-xs font-mono bg-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+        <div class="flex gap-2 mt-3">
+          <input id="fileUploader" type="file" accept=".csv,text/csv" class="text-sm"/>
+          <button id="loadExampleBtn" class="bg-gray-700 text-white px-3 py-2 rounded">تحميل مثال</button>
+        </div>
+      </div>
+
+      <div class="card bg-indigo-900 bg-opacity-20 border-indigo-800">
+        <h3 class="font-bold text-indigo-300 mb-4 border-b border-indigo-800 pb-2">⚙️ إعدادات النظام المتقدم</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-400 mb-1">نسبة انحراف ZigZag (%):</label>
+            <input type="number" id="deviationInput" value="3" min="1" max="10" class="w-full p-2 border rounded text-center bg-gray-800">
+          </div>
+          
+          <div>
+             <label class="block text-xs font-bold text-gray-400 mb-1">مقياس جان (S/T Scale):</label>
+             <input type="number" id="gannScaleInput" value="0.05" step="0.01" class="w-full p-2 border rounded text-center bg-gray-800 font-bold text-indigo-400">
+          </div>
+          
+          <div>
+            <label class="block text-xs font-bold text-gray-400 mb-1">هامش المرونة:</label>
+            <input type="number" id="toleranceInput" value="0.08" min="0.01" max="0.2" step="0.01" class="w-full p-2 border rounded text-center bg-gray-800">
+          </div>
+        </div>
+
+        <button id="runBtn" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg transform active:scale-95">
+          🚀 تشغيل التحليل المتقدم
+        </button>
+      </div>
+    </div>
+
+    <p id="status" class="text-center text-sm text-gray-400 mb-4 min-h-[20px]"></p>
+
+    <div id="outputSection" class="hidden animate-fade-in-up">
+      
+      <div class="bg-gray-800 text-white p-4 rounded-xl shadow-lg flex justify-between items-center mb-6 border border-gray-700">
+        <div>
+            <span class="block text-gray-400 text-xs uppercase tracking-wider">آخر تاريخ مسجل</span>
+            <span id="lastDateDisplay" class="font-bold text-xl font-mono">--</span>
+        </div>
+        <div class="text-left">
+            <span class="block text-gray-400 text-xs uppercase tracking-wider">آخر إغلاق</span>
+            <span id="lastPriceDisplay" class="font-bold text-2xl text-green-400 font-mono">--</span>
+        </div>
+      </div>
+
+      <div class="card border-r-4 border-indigo-600">
+        <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+           <span class="text-2xl">🔮</span> الخلاصة الرقمية المتقدمة
+        </h2>
+        <div id="finalDecision" class="text-lg leading-relaxed"></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <div class="card border-t-4 border-orange-500 relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-red-500"></div>
+          <h3 class="text-lg font-bold text-orange-300 mb-4 flex items-center justify-between">
+            <span>📐 علوم ويليام جان (Gann)</span>
+            <span class="text-xs bg-orange-900 bg-opacity-30 text-orange-300 px-2 py-1 rounded-full">مربع 9 + المروحة</span>
+          </h3>
+          
+          <div id="gannDetailedOutput" class="space-y-4"></div>
+        </div>
+
+        <div class="card border-t-4 border-purple-500">
+          <h3 class="text-lg font-bold text-purple-300 mb-4 flex items-center justify-between">
+            <span>🦋 التحليل الهارمونيكي المتقدم</span>
+            <span class="text-xs bg-purple-900 bg-opacity-30 text-purple-300 px-2 py-1 rounded-full">7 أنماط</span>
+          </h3>
+          <div id="harmonicOutput" class="space-y-4"></div>
+        </div>
+      </div>
+      
+      <!-- الرسم البياني المتقدم -->
+      <div class="card border-t-4 border-blue-500">
+        <div class="pattern-info">
+          <h3 class="text-lg font-bold text-blue-300">📊 الرسم البياني المتقدم</h3>
+          <div id="patternStatus" class="completion-status">--</div>
+        </div>
+        
+        <div class="chart-container" id="advancedChartBox">
+          <div class="flex justify-center items-center h-full text-gray-500">
+            سيظهر الرسم البياني هنا بعد التحليل
+          </div>
+        </div>
+        
+        <div id="patternDetails" class="text-center text-sm text-gray-400 mt-2">--</div>
+      </div>
+      
+      <!-- موجات إليوت الذكية -->
+      <div class="card border-t-4 border-green-500">
+        <div class="pattern-info">
+          <h3 class="text-lg font-bold text-green-300">🌊 تحليل موجات إليوت الذكية</h3>
+          <span class="gann-badge elliott-badge" id="elliottStatus">--</span>
+        </div>
+        
+        <div id="elliottDetails" class="space-y-4">
+          <div class="flex justify-center items-center h-20 text-gray-500">
+            سيظهر تحليل موجات إليوت الذكية هنا
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="text-lg font-bold text-gray-300 mb-3">هيكل الموجات (ZigZag)</h3>
+        <div class="overflow-x-auto rounded-lg border border-gray-700">
+          <table class="w-full text-sm text-right">
+            <thead class="bg-gray-800 text-gray-400">
+              <tr>
+                <th class="p-3">التاريخ</th>
+                <th class="p-3">السعر</th>
+                <th class="p-3">النوع</th>
+                <th class="p-3">التغيير</th>
+              </tr>
+            </thead>
+            <tbody id="zigzagTableBody" class="divide-y divide-gray-700"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+    <!-- التوقيع -->
+    <div class="signature">
+      تصميم وبرمجة <span class="signature-text">ابراهيم اللاحم</span> - ابو حمود - <span class="signature-year">2025</span>
+    </div>
+  </div>
+
+<script>
+// ================================
+// نسخة مصححة: تحسينات صلابة وأمان
+// ================================
+
+// --- بيانات تجريبية ---
+const exampleData = `Date,Open,High,Low,Close
+2025-10-01,38.00,39.00,37.50,38.50
+2025-10-05,38.50,40.00,38.20,39.80
+2025-10-10,39.80,41.50,39.50,41.20
+2025-10-15,41.20,43.00,41.00,42.50
+2025-10-20,42.50,44.50,42.00,44.00
+2025-10-25,44.00,45.00,43.50,44.20
+2025-11-01,44.20,43.00,42.00,42.50
+2025-11-05,42.50,42.80,41.50,41.90
+2025-11-09,41.90,42.20,41.86,42.00
+2025-11-10,42.00,43.76,41.90,43.50
+2025-11-12,43.50,43.00,42.00,42.20
+2025-11-15,42.20,41.80,41.20,41.30
+2025-11-17,41.30,41.50,41.16,41.40
+2025-11-20,41.40,42.50,41.30,42.20
+2025-11-25,42.20,44.00,42.00,43.80`;
+
+// وضع المثال والتحميل من ملف
+window.onload = () => { document.getElementById('dataInput').value = exampleData; };
+document.getElementById('loadExampleBtn').addEventListener('click', () => {
+  document.getElementById('dataInput').value = exampleData;
+  setStatus('مثال محمّل');
+});
+document.getElementById('fileUploader').addEventListener('change', (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    document.getElementById('dataInput').value = String(reader.result || '');
+    setStatus('تم تحميل ملف CSV');
+  };
+  reader.readAsText(f, 'utf-8');
+});
+
+// --- Helpers ---
+function setStatus(text) {
+  const s = document.getElementById('status');
+  s.innerText = text;
+}
+function safeNum(v, fallback = 0) {
+  return (typeof v === 'number' && isFinite(v)) ? v : fallback;
+}
+function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+
+// --- Parsing (قوي وآمن) ---
+function parseCSV(text) {
+  if (!text || !String(text).trim()) return [];
+  const lines = String(text).trim().split(/\r?\n/);
+  // إزالة رؤوس إذا كانت موجودة
+  let header = lines[0] || '';
+  // إذا السطر الأول يتضمن كلمة Date أو Close نفترض وجود header
+  const hasHeader = /date|open|high|low|close/i.test(header);
+  if (hasHeader) lines.shift();
+  const rows = [];
+  for (let line of lines) {
+    if (!line || !line.trim()) continue;
+    const cols = line.split(/,|\t/).map(c => c.trim());
+    if (cols.length < 5) continue;
+    const date = new Date(cols[0]);
+    if (isNaN(date.getTime())) continue;
+    const open = parseFloat(cols[1]), high = parseFloat(cols[2]), low = parseFloat(cols[3]), close = parseFloat(cols[4]);
+    if (![open, high, low, close].every(v => isFinite(v))) continue;
+    rows.push({
+      date,
+      dateStr: cols[0],
+      open, high, low, close
+    });
+  }
+  // فرز تصاعدي حسب التاريخ
+  return rows.sort((a, b) => a.date - b.date);
+}
+
+// --- Smart ZigZag (مع حماية) ---
+function calculateSmartZigZag(data, deviationPercent) {
+  if (!Array.isArray(data) || data.length === 0) return [];
+  const points = [];
+  let trend = 0;
+  let lastHigh = safeNum(data[0].high, 0);
+  let lastLow = safeNum(data[0].low, 0);
+  let lastHighIndex = 0; let lastLowIndex = 0;
+  const deviation = (isFinite(deviationPercent) ? deviationPercent : 3) / 100;
+
+  points.push({ type: 'Start', price: safeNum(data[0].close, 0), index: 0, date: data[0].dateStr });
+
+  for (let i = 0; i < data.length; i++) {
+    const currH = safeNum(data[i].high, lastHigh);
+    const currL = safeNum(data[i].low, lastLow);
+    if (trend === 0) {
+      if (currH > lastHigh * (1 + deviation)) trend = 1;
+      else if (currL < lastLow * (1 - deviation)) trend = -1;
+    }
+    if (trend === 1) {
+      if (currH > lastHigh) { lastHigh = currH; lastHighIndex = i; }
+      else if (currL < lastHigh * (1 - deviation)) {
+        points.push({ type: 'High', price: lastHigh, index: lastHighIndex, date: data[lastHighIndex].dateStr });
+        trend = -1; lastLow = currL; lastLowIndex = i;
+      }
+    } else if (trend === -1) {
+      if (currL < lastLow) { lastLow = currL; lastLowIndex = i; }
+      else if (currH > lastLow * (1 + deviation)) {
+        points.push({ type: 'Low', price: lastLow, index: lastLowIndex, date: data[lastLowIndex].dateStr });
+        trend = 1; lastHigh = currH; lastHighIndex = i;
+      }
+    }
+  }
+  if (trend === 1) points.push({ type: 'High (Pending)', price: lastHigh, index: lastHighIndex, date: data[lastHighIndex].dateStr });
+  else if (trend === -1) points.push({ type: 'Low (Pending)', price: lastLow, index: lastLowIndex, date: data[lastLowIndex].dateStr });
+
+  // Clean up تخلص من المتتاليات المتكررة
+  const clean = [];
+  if(points.length > 0) clean.push(points[0]);
+  for(let i=1; i<points.length; i++) {
+      const prev = clean[clean.length-1];
+      const curr = points[i];
+      if(prev.type.includes('Start')) { clean.push(curr); continue; }
+      const prevType = prev.type.includes('High') ? 'High' : 'Low';
+      const currType = curr.type.includes('High') ? 'High' : 'Low';
+      if(prevType !== currType) clean.push(curr);
+      else {
+          if(currType === 'High' && curr.price > prev.price) clean[clean.length-1] = curr;
+          if(currType === 'Low' && curr.price < prev.price) clean[clean.length-1] = curr;
+      }
+  }
+  return clean;
+}
+
+// =============================================
+// نظام الهارمونيك المتطور مع الأنماط الجديدة (مع حماية من حالات الحافة)
+// =============================================
+function analyzeHarmonicExtended(points, tolerance = 0.08) {
+  const activePoints = (Array.isArray(points) ? points.filter(p => !p.type.includes('Start')) : []);
+  if (activePoints.length < 4) return { pattern: "لا يوجد نمط مكتمل", details: "بانتظار المزيد من الموجات", color: "text-gray-400", targets: [], points: [] };
+
+  const X = activePoints[activePoints.length - 4];
+  const A = activePoints[activePoints.length - 3];
+  const B = activePoints[activePoints.length - 2];
+  const C = activePoints[activePoints.length - 1];
+
+  const XA = Math.abs(A.price - X.price);
+  if (XA === 0) {
+    return { pattern: "لا يوجد نموذج متوافق", details: "XA=0 (غير صالح)", color: "text-gray-400", targets: [], points: [X, A, B, C], currentRatio: 0, status: 'no_pattern' };
+  }
+  const AB = Math.abs(B.price - A.price);
+  const ratio_XB = AB / XA;
+  const isBullish = X.price < A.price;
+
+  // استخدام هامش المرونة
+  const match = (val, target) => Math.abs(val - target) <= tolerance;
+  const range = (val, min, max) => (val >= min - tolerance && val <= max + tolerance);
+
+  // 1. نمط Bat (أولوية متوسطة)
+  if (range(ratio_XB, 0.382, 0.50) && !match(ratio_XB, 0.618)) {
+    const targetD = isBullish ? A.price - (XA * 0.886) : A.price + (XA * 0.886);
+    return { 
+      pattern: "🦇 خفاش (Bat)", 
+      details: `B=${(ratio_XB*100).toFixed(1)}%`,
+      signal: "انعكاس مرتقب",
+      color: "text-purple-400",
+      targets: [{ label: "هدف الخفاش 0.886", price: targetD }],
+      points: [X, A, B, C],
+      isBullish,
+      currentRatio: ratio_XB,
+      status: 'forming'
+    };
+  }
+
+  // 2. نمط Gartley (أولوية أعلى)
+  if (match(ratio_XB, 0.618)) {
+    const targetD = isBullish ? A.price - (XA * 0.786) : A.price + (XA * 0.786);
+    return { 
+      pattern: "🦈 جارتلي (Gartley)", 
+      details: `B=${(ratio_XB*100).toFixed(1)}%`,
+      signal: "انعكاس قوي",
+      color: "text-blue-400",
+      targets: [{ label: "هدف الجارتلي 0.786", price: targetD }],
+      points: [X, A, B, C],
+      isBullish,
+      currentRatio: ratio_XB,
+      status: 'forming'
+    };
+  }
+
+  // 3. نمط Butterfly (الفراشة)
+  if (match(ratio_XB, 0.786)) {
+    const targetD = isBullish ? A.price - (XA * 1.27) : A.price + (XA * 1.27);
+    return { 
+      pattern: "🦋 فراشة (Butterfly)", 
+      details: `B=${(ratio_XB*100).toFixed(1)}%`,
+      signal: "امتداد مرتقب",
+      color: "text-indigo-400",
+      targets: [{ label: "هدف الفراشة 1.27", price: targetD }],
+      points: [X, A, B, C],
+      isBullish,
+      currentRatio: ratio_XB,
+      status: 'forming'
+    };
+  }
+
+  // 4. نمط Crab (السلطعون) - أولوية محددة
+  if (range(ratio_XB, 0.618, 0.8)) {
+    const targetD = isBullish ? A.price - (XA * 1.618) : A.price + (XA * 1.618);
+    return { 
+      pattern: "🦀 سلطعون (Crab)", 
+      details: `B=${(ratio_XB*100).toFixed(1)}%`,
+      signal: "امتداد قوي",
+      color: "text-pink-400",
+      targets: [{ label: "هدف السلطعون 1.618", price: targetD }],
+      points: [X, A, B, C],
+      isBullish,
+      currentRatio: ratio_XB,
+      status: 'forming'
+    };
+  }
+
+  // 5. نمط Shark (القرش) - الجديد
+  if (range(ratio_XB, 0.886, 1.13)) {
+    const prz_886 = isBullish ? A.price - (XA * 0.886) : A.price + (XA * 0.886);
+    const prz_113 = isBullish ? A.price - (XA * 1.13) : A.price + (XA * 1.13);
+    
+    return { 
+      pattern: "🦈 قرش (Shark)", 
+      details: `B=${(ratio_XB*100).toFixed(1)}%`,
+      signal: "انعكاس حاد مرتقب!",
+      color: "text-cyan-400",
+      targets: [
+        { label: "PRZ 0.886", price: prz_886 },
+        { label: "PRZ 1.13", price: prz_113 }
+      ],
+      points: [X, A, B, C],
+      isBullish,
+      currentRatio: ratio_XB,
+      status: 'extreme'
+    };
+  }
+
+  // 6. نمط Cypher (السيفر) - الجديد (يتطلب شرط XC)
+  if (range(ratio_XB, 0.382, 0.618)) {
+    const ABval = AB || 1e-9;
+    const XC = Math.abs(C.price - B.price) / ABval;
+    if (range(XC, 1.272, 1.414)) {
+      const targetD = isBullish ? A.price - (XA * 0.786) : A.price + (XA * 0.786);
+      return { 
+        pattern: "🔷 سيفر (Cypher)", 
+        details: `B=${(ratio_XB*100).toFixed(1)}% | XC=${XC.toFixed(3)}`,
+        signal: "إشارة دقيقة جدًا",
+        color: "text-teal-400",
+        targets: [{ label: "هدف السيفر 0.786", price: targetD }],
+        points: [X, A, B, C],
+        isBullish,
+        currentRatio: ratio_XB,
+        status: 'high_precision'
+      };
+    }
+  }
+
+  // إذا لم يتطابق مع أي نمط
+  return { 
+    pattern: "لا يوجد نموذج متوافق", 
+    details: `B=${(ratio_XB*100).toFixed(1)}% (خارج النطاق)`, 
+    color: "text-gray-400", 
+    targets: [],
+    points: [X, A, B, C],
+    isBullish,
+    currentRatio: ratio_XB,
+    status: 'no_pattern'
+  };
+}
+
+// --- نمط 5-0 (الأقوى) - مُصحّح ---
+function detectFiveZeroPattern(swings) {
+  if (!Array.isArray(swings) || swings.length < 7) return null;
+  
+  const last7 = swings.slice(-7);
+  // فرضية: last7[0] هو 0 و last7[5] هو موجة 5
+  const wave0 = last7[0].price;
+  const wave5High = last7[5].price;
+  const totalMove = Math.abs(wave5High - wave0);
+  if (totalMove === 0) return null;
+  const currentRetrace = Math.abs(swings[swings.length-1].price - wave5High) / totalMove;
+
+  if (currentRetrace >= 0.45 && currentRetrace <= 0.55) {
+    // ثقة من 0..100
+    const confidence = Math.round(clamp01(1 - Math.abs(currentRetrace - 0.5) * 2) * 100);
+    // هدف منطقي: اختبار إعادة إلى منتصف المدى أو ارتداد
+    const target = wave5High > wave0 ? wave0 + (totalMove * 0.5) : wave0 - (totalMove * 0.5);
+    
+    return {
+      pattern: "🎯 نمط 5-0 (الأقوى على الإطلاق)",
+      confidence,
+      target,
+      color: "text-yellow-400",
+      desc: `تراجع ~50% (${(currentRetrace*100).toFixed(1)}%)`,
+      status: 'ultimate'
+    };
+  }
+  return null;
+}
+
+// --- تحليل جان العميق ---
+function analyzeGannDeep(points, currentPrice, lastDate, scaleFactor) {
+  if (!Array.isArray(points) || points.length === 0) return null;
+  const lastLow = points.slice().reverse().find(p => p.type.includes('Low'));
+  if (!lastLow) return null;
+
+  const startPrice = safeNum(lastLow.price, 0.0001);
+  const startDate = new Date(lastLow.date);
+  const currDate = new Date(lastDate);
+  if (isNaN(startDate.getTime()) || isNaN(currDate.getTime())) return null;
+  const daysDiff = Math.max(0, Math.floor((currDate - startDate) / (1000 * 60 * 60 * 24)));
+  const sf = isFinite(scaleFactor) ? scaleFactor : 0.05;
+
+  const angles = {
+      "2x1": startPrice + (daysDiff * sf * 2),
+      "1x1": startPrice + (daysDiff * sf * 1),
+      "1x2": startPrice + (daysDiff * sf * 0.5),
+      "1x3": startPrice + (daysDiff * sf * 0.33),
+  };
+
+  const rootPrice = Math.sqrt(Math.max(0.0001, startPrice));
+  const sq9_180 = Math.pow(rootPrice + 0.5, 2);
+  const sq9_360 = Math.pow(rootPrice + 1.0, 2);
+
+  let fanStatus = "";
+  let fanColor = "";
+  if (currentPrice > angles["1x1"]) {
+      fanStatus = "إيجابي (فوق 1x1)";
+      fanColor = "text-green-400";
+  } else if (currentPrice > angles["1x2"]) {
+      fanStatus = "محايد/تصحيح (بين 1x1 و 1x2)";
+      fanColor = "text-yellow-400";
+  } else {
+      fanStatus = "سلبي (تحت 1x2)";
+      fanColor = "text-red-400";
+  }
+
+  return {
+      base: { price: startPrice, date: lastLow.date, days: daysDiff },
+      fan: angles,
+      sq9: { lvl180: sq9_180, lvl360: sq9_360 },
+      status: fanStatus,
+      statusColor: fanColor
+  };
+}
+
+// --- الرسم البياني المتقدم (مع حماية الانقسام على صفر) ---
+function drawAdvancedChart(result, containerId) {
+  const pts = (result && result.points && result.points.length === 4) ? result.points : [];
+  if (pts.length < 2) {
+    document.getElementById(containerId).innerHTML = `<div class="flex justify-center items-center h-full text-gray-500">لا توجد نقاط كافية للرسم</div>`;
+    return;
+  }
+  let vals = pts.map(p => safeNum(p.price, 0));
+  
+  if (result.targets && result.targets.length > 0) {
+    result.targets.forEach(t => vals.push(safeNum(t.price, 0)));
+  }
+
+  const max = Math.max(...vals);
+  const min = Math.min(...vals);
+  const H = 250;
+  const W = 500;
+  
+  const span = (max - min) || 1; // حماية من الصفر
+  const norm = v => H - 30 - ((v - min) / span) * (H - 60);
+  
+  const xStep = W / 4;
+  let startX = 30;
+  
+  let pathD = `M ${startX} ${norm(pts[0].price)}`;
+  let circles = "";
+  const labels = ['X', 'A', 'B', 'C'];
+  const color = result.isBullish ? '#089981' : '#f23645';
+
+  pts.forEach((p, i) => {
+    const x = startX + (i * xStep);
+    const y = norm(p.price);
+    if(i > 0) pathD += ` L ${x} ${y}`;
+    
+    circles += `
+      <circle cx="${x}" cy="${y}" r="4" fill="${color}" stroke="#131722" stroke-width="2"/>
+      <text x="${x}" y="${y - 15}" text-anchor="middle" fill="${color}" font-weight="bold" font-size="12">${labels[i]}</text>
+      <text x="${x}" y="${y + 25}" text-anchor="middle" fill="#787b86" font-size="10">${p.price.toFixed(2)}</text>
+    `;
+  });
+
+  let extraPath = "";
+  let dCircle = "";
+  let targetZones = "";
+  
+  if (result.targets && result.targets.length > 0) {
+    const cX = startX + (3 * xStep);
+    const cY = norm(pts[3].price);
+    
+    result.targets.forEach((target, idx) => {
+      const dX = startX + (4 * xStep);
+      const dY = norm(target.price);
+      
+      if (idx === 0) {
+        extraPath += `<path d="M ${cX} ${cY} L ${dX} ${dY}" stroke="${color}" stroke-width="2" stroke-dasharray="4,4" fill="none"/>`;
+        dCircle += `
+          <circle cx="${dX}" cy="${dY}" r="4" fill="none" stroke="${color}" stroke-width="2"/>
+          <text x="${dX}" y="${dY - 15}" text-anchor="middle" fill="${color}" font-weight="bold" font-size="12">D${result.targets.length > 1 ? '?' : ''}</text>
+          <text x="${dX}" y="${dY + 25}" text-anchor="middle" fill="#787b86" font-size="10">${target.price.toFixed(2)}</text>
+        `;
+      }
+      
+      if (result.pattern && result.pattern.includes("قرش") && result.targets.length > 1) {
+        targetZones += `
+          <rect x="${dX - 20}" y="${dY - 2}" width="40" height="4" fill="${color}" opacity="0.3"/>
+        `;
+      }
+    });
+  } 
+
+  document.getElementById(containerId).innerHTML = `
+  <svg width="100%" height="100%" viewBox="0 0 ${W} ${H}">
+    <path d="${pathD}" stroke="${color}" stroke-width="2" fill="none" stroke-linejoin="round" opacity="0.8"/>
+    ${extraPath}
+    ${targetZones}
+    ${circles}
+    ${dCircle}
+  </svg>`;
+}
+
+// =============================================
+// نظام موجات إليوت الذكي والمتقدم (مع حماية nulls)
+// =============================================
+
+function detectWaveDegree(swings) {
+  if (!Array.isArray(swings) || swings.length < 2) return { primary: 0, intermediate: 0, minor: 0 };
+  const lengths = [];
+  for (let i = 1; i < swings.length; i++) {
+    lengths.push(Math.abs(swings[i].price - swings[i-1].price));
+  }
+  const sorted = lengths.slice().sort((a,b)=>b-a);
+  const primaryLength = sorted[0] || 0;
+  return {
+    primary: primaryLength,
+    intermediate: sorted[2] || primaryLength * 0.382,
+    minor: sorted[4] || primaryLength * 0.236
+  };
+}
+
+function findAllPossibleElliottPatterns(swings) {
+  const patterns = [];
+  if (!Array.isArray(swings) || swings.length < 4) return patterns;
+
+  for (let i = 5; i <= swings.length; i++) {
+    const sample = swings.slice(i-5, i);
+    const result = checkImpulsePattern(sample);
+    if (result && result.confidence > 70) patterns.push({...result, type: "Impulse", endIndex: i-1});
+  }
+
+  for (let i = 8; i <= swings.length; i++) {
+    const sample = swings.slice(i-8, i);
+    const r2 = checkExtendedWave3(sample);
+    if (r2 && r2.confidence > 75) patterns.push({...r2, type: "Impulse-Extended3", endIndex: i-1});
+    const r3 = checkExtendedWave5(sample);
+    if (r3 && r3.confidence > 75) patterns.push({...r3, type: "Impulse-Extended5", endIndex: i-1});
+  }
+
+  for (let i = 4; i <= swings.length; i++) {
+    const sample = swings.slice(i-4, i);
+    const r4 = checkZigzagABC(sample);
+    if (r4 && r4.confidence > 80) patterns.push({...r4, type: "Corrective-ABC", endIndex: i-1});
+  }
+
+  for (let i = 6; i <= swings.length; i++) {
+    const sample = swings.slice(i-6, i);
+    const r5 = checkFlatCorrection(sample);
+    if (r5) patterns.push({...r5, type: "Corrective-Flat", endIndex: i-1});
+  }
+
+  for (let i = 10; i <= swings.length; i += 2) {
+    const sample = swings.slice(i-10, i);
+    const r6 = checkTriangle(sample);
+    if (r6) patterns.push({...r6, type: "Corrective-Triangle", endIndex: i-1});
+  }
+
+  return patterns.sort((a,b) => (b.confidence || 0) - (a.confidence || 0) || (b.endIndex || 0) - (a.endIndex || 0));
+}
+
+// فحص نمط دافع كلاسيكي
+function checkImpulsePattern(points) {
+  if (!points || points.length < 6) return null;
+  const [w0, w1, w2, w3, w4, w5] = points;
+  if (![w0,w1,w2,w3,w4,w5].every(p => p && isFinite(p.price))) return null;
+
+  const wave1 = Math.abs(w1.price - w0.price);
+  const wave2 = Math.abs(w2.price - w1.price);
+  const wave3 = Math.abs(w3.price - w2.price);
+  const wave4 = Math.abs(w4.price - w3.price);
+  const wave5 = Math.abs(w5.price - w4.price);
+
+  const rules = {
+    wave2Retracement: wave1 > 0 ? (wave2 / wave1 <= 0.786) : false,
+    wave3NotShortest: wave3 > wave1 && wave3 > wave5,
+    wave4NoOverlap: (w4.price > w1.price && w5.price > w3.price) || (w4.price < w1.price && w5.price < w3.price)
+  };
+
+  const validRules = Object.values(rules).filter(Boolean).length;
+  let confidence = Math.round((validRules / Object.keys(rules).length) * 100);
+
+  const ratio32 = wave1 > 0 ? wave3 / wave1 : 0;
+  if (ratio32 >= 1.618 && ratio32 <= 2.618) confidence += 10;
+  if (ratio32 >= 2.618 && ratio32 <= 4.236) confidence += 15;
+
+  if (confidence < 70) return null;
+
+  return {
+    pattern: "نمط دافع كامل 1-2-3-4-5",
+    confidence,
+    currentWave: "انتهت الموجة 5",
+    targets: {
+      correction61: w5.price - (wave1 * 0.618),
+      correction100: w5.price - wave1,
+      extendedCorrection: w5.price - (wave1 * 1.618)
+    }
+  };
+}
+
+function checkExtendedWave3(points) {
+  if (!points || points.length < 8) return null;
+  const [w0,w1,w2,w3,w4,w5,w6,w7] = points;
+  if (![w0,w1,w2,w3,w4,w5,w6,w7].every(p=>p && isFinite(p.price))) return null;
+  const wave1 = Math.abs(w1.price - w0.price);
+  const wave3 = Math.abs(w3.price - w2.price);
+  if (wave1 <= 0) return null;
+  if (wave3 < wave1 * 1.618) return null;
+  const ratio32 = wave3 / wave1;
+  let confidence = 60;
+  if (ratio32 >= 1.618 && ratio32 <= 2.618) confidence += 25;
+  if (ratio32 >= 2.618 && ratio32 <= 4.236) confidence += 15;
+  return { pattern: "نمط دافع مع موجة 3 ممتدة", confidence, currentWave: "في موجة 3 ممتدة", targets: { wave5Target: w4.price + (wave1 * 0.618), extendedTarget: w4.price + wave1 } };
+}
+
+function checkExtendedWave5(points) {
+  if (!points || points.length < 8) return null;
+  const [w0,w1,w2,w3,w4,w5,w6,w7] = points;
+  if (![w0,w1,w2,w3,w4,w5,w6,w7].every(p=>p && isFinite(p.price))) return null;
+  const wave1 = Math.abs(w1.price - w0.price);
+  const wave3 = Math.abs(w3.price - w2.price);
+  const wave5 = Math.abs(w5.price - w4.price);
+  if (wave1 <= 0 || wave3 <= 0) return null;
+  if (wave5 < wave1 * 1.618 && wave5 < wave3 * 1.618) return null;
+  const ratio51 = wave5 / wave1;
+  let confidence = 60;
+  if (ratio51 >= 1.618 && ratio51 <= 2.618) confidence += 25;
+  if (ratio51 >= 2.618 && ratio51 <= 4.236) confidence += 15;
+  return { pattern: "نمط دافع مع موجة 5 ممتدة", confidence, currentWave: "في موجة 5 ممتدة", targets: { extension161: w4.price + (wave1 * 1.618), extension261: w4.price + (wave1 * 2.618) } };
+}
+
+function checkZigzagABC(points) {
+  if (!points || points.length < 4) return null;
+  // هنا نفترض أ، ب، ج
+  const A = points[0], B = points[1], C = points[2];
+  if (![A,B,C].every(p => p && isFinite(p.price))) return null;
+  const AB = Math.abs(B.price - A.price);
+  const BC = Math.abs(C.price - B.price);
+  if (AB === 0) return null;
+  const ratio = BC / AB;
+  if (ratio >= 0.9 && ratio <= 1.3) {
+    return { pattern: "تصحيح A-B-C (Zigzag)", confidence: 90, currentWave: "انتهى التصحيح A-B-C", targets: { correction61: A.price + (C.price - B.price) * 0.618, correction100: A.price + (C.price - B.price), extendedCorrection: A.price + (C.price - B.price) * 1.618 } };
+  }
+  return null;
+}
+
+function checkFlatCorrection(points) {
+  if (!points || points.length < 6) return null;
+  const [A,B,C,D,E] = points;
+  if (![A,B,C,D,E].every(p => p && isFinite(p.price))) return null;
+  const AB = Math.abs(B.price - A.price);
+  const BC = Math.abs(C.price - B.price);
+  const CD = Math.abs(D.price - C.price);
+  const DE = Math.abs(E.price - D.price);
+  if (AB === 0 || BC === 0) return null;
+  const ratioBA = Math.abs(B.price - A.price) / AB;
+  const ratioCB = Math.abs(C.price - B.price) / BC;
+  if (ratioBA >= 0.8 && ratioBA <= 1.1 && ratioCB >= 0.8 && ratioCB <= 1.3) {
+    return { pattern: "تصحيح مسطح (Flat)", confidence: 85, currentWave: "في تصحيح مسطح", targets: { nextMove: A.price + (E.price - D.price) } };
+  }
+  return null;
+}
+
+function checkTriangle(points) {
+  if (!points || points.length < 10) return null;
+  const swings = points.filter((p,i) => i%2 ===0);
+  if (swings.length < 5) return null;
+  const [A,B,C,D,E] = swings;
+  if (![A,B,C,D,E].every(p => p && isFinite(p.price))) return null;
+  const ab = Math.abs(B.price - A.price);
+  const bc = Math.abs(C.price - B.price);
+  const cd = Math.abs(D.price - C.price);
+  const de = Math.abs(E.price - D.price);
+  if (ab > bc && bc > cd && cd > de) {
+    return { pattern: "مثلث تصحيحي (Triangle)", confidence: 80, currentWave: "في موجة E من المثلث", targets: { breakout: E.price + (ab * 0.618) } };
+  }
+  return null;
+}
+
+function analyzeSmartElliott(swings) {
+  if (!Array.isArray(swings) || swings.length < 4) return null;
+  const waveDegree = detectWaveDegree(swings);
+  const patterns = findAllPossibleElliottPatterns(swings);
+  if (patterns.length === 0) return null;
+  const bestPatterns = patterns.slice(0,2);
+  return { primaryScenario: bestPatterns[0], alternativeScenario: bestPatterns[1], waveDegree, totalPatternsFound: patterns.length };
+}
+
+// عرض نتائج إليوت (مع حماية)
+function displaySmartElliottResults(elliottAnalysis, currentPrice) {
+  if (!elliottAnalysis || !elliottAnalysis.primaryScenario) {
+    return `
+      <div class="text-center py-4 text-gray-400">
+        <div>لا توجد موجات إليوت واضحة حالياً</div>
+        <div class="text-sm mt-2">تحتاج إلى المزيد من البيانات للتحليل الذكي</div>
+      </div>
+    `;
+  }
+
+  const primary = elliottAnalysis.primaryScenario || { pattern: 'غير معروف', confidence: 0, targets: {} };
+  const alternative = elliottAnalysis.alternativeScenario || null;
+
+  const primaryTargetsHtml = Object.entries(primary.targets || {}).map(([key, value]) => {
+    const cls = (isFinite(value) && value > currentPrice) ? 'text-green-400' : 'text-red-400';
+    const vtxt = (isFinite(value) ? value.toFixed(2) : '-');
+    return `<div class="target-item-small"><span class="text-gray-300">${getTargetLabel(key)}</span><span class="font-mono font-bold ${cls}">${vtxt}</span></div>`;
+  }).join('');
+
+  const altTargetsHtml = alternative ? Object.entries(alternative.targets || {}).map(([key, value]) => {
+    const cls = (isFinite(value) && value > currentPrice) ? 'text-green-400' : 'text-red-400';
+    const vtxt = (isFinite(value) ? value.toFixed(2) : '-');
+    return `<div class="target-item-small"><span class="text-gray-300">${getTargetLabel(key)}</span><span class="font-mono font-bold ${cls}">${vtxt}</span></div>`;
+  }).join('') : '';
+
+  let html = `
+    <div class="mb-6">
+      <div class="text-center text-sm text-gray-400 mb-4">
+        تم اكتشاف ${elliottAnalysis.totalPatternsFound} نمط محتمل
+      </div>
+
+      <div class="scenario-card" style="border-color: var(--accent-color);">
+        <div class="scenario-header">
+          <h4 class="text-lg font-bold text-blue-300">السيناريو الأقوى</h4>
+          <span class="confidence-badge" style="background: rgba(41, 98, 255, 0.2); color: var(--accent-color);">
+            ${primary.confidence || 0}% ثقة
+          </span>
+        </div>
+        <div class="text-sm text-gray-300 mb-3">
+          <strong>${primary.pattern}</strong><br>
+          ${primary.currentWave || ''}
+        </div>
+        
+        <div class="target-list">
+          <div class="text-xs text-gray-400 mb-2">الأهداف المحتملة:</div>
+          ${primaryTargetsHtml || '<div class="text-gray-400">—</div>'}
+        </div>
+      </div>
+
+      ${alternative ? `
+      <div class="scenario-card" style="border-color: var(--gold-color);">
+        <div class="scenario-header">
+          <h4 class="text-lg font-bold text-yellow-300">السيناريو البديل</h4>
+          <span class="confidence-badge" style="background: rgba(247, 185, 36, 0.2); color: var(--gold-color);">
+            ${alternative.confidence || 0}% ثقة
+          </span>
+        </div>
+        <div class="text-sm text-gray-300 mb-3">
+          <strong>${alternative.pattern}</strong><br>
+          ${alternative.currentWave || ''}
+        </div>
+        
+        <div class="target-list">
+          <div class="text-xs text-gray-400 mb-2">الأهداف المحتملة:</div>
+          ${altTargetsHtml || '<div class="text-gray-400">—</div>'}
+        </div>
+      </div>
+      ` : ''}
+
+      <div class="confluence-note">
+        <strong>📊 تحليل التقاطع الذكي:</strong><br>
+        ${generateSmartConfluenceText(elliottAnalysis, currentPrice)}
+      </div>
+    </div>
+  `;
+
+  return html;
+}
+
+function getTargetLabel(key) {
+  const labels = {
+    'correction61': 'تصحيح 61.8%',
+    'correction100': 'تصحيح 100%',
+    'extendedCorrection': 'تصحيح 161.8%',
+    'wave5Target': 'هدف الموجة 5',
+    'extendedTarget': 'هدف ممتد',
+    'nextMove': 'الحركة التالية',
+    'breakout': 'هدف الاختراق',
+    'extension161': 'امتداد 161.8%',
+    'extension261': 'امتداد 261.8%'
+  };
+  return labels[key] || key;
+}
+
+function generateSmartConfluenceText(elliottAnalysis, currentPrice) {
+  if (!elliottAnalysis || !elliottAnalysis.primaryScenario) return 'بيانات غير كافية لعمل تقاطع ذكي.';
+  const primary = elliottAnalysis.primaryScenario;
+  let text = `السيناريو الأساسي "${primary.pattern}" يحظى بثقة ${primary.confidence || 0}%. `;
+  if (primary.type && primary.type.includes('Impulse')) {
+    text += "نحن في مرحلة دافعة رئيسية. ";
+  } else if (primary.type && primary.type.includes('Corrective')) {
+    text += "نحن في مرحلة تصحيحية. ";
+  }
+  const degree = elliottAnalysis.waveDegree || { primary: 0 };
+  text += `درجة الموجات تشير إلى حركة ${(degree.primary > (currentPrice * 0.1)) ? 'كبيرة' : 'متوسطة'}.`;
+  if (elliottAnalysis.alternativeScenario) {
+    text += ` السيناريو البديل "${elliottAnalysis.alternativeScenario.pattern}" يحظى بثقة ${elliottAnalysis.alternativeScenario.confidence || 0}%.`;
+  }
+  return text;
+}
+
+// --- التشغيل المتقدم (مع حماية القيم) ---
+document.getElementById('runBtn').addEventListener('click', runAdvancedSystem);
+
+function runAdvancedSystem() {
+  const input = document.getElementById('dataInput').value;
+  const deviation = parseFloat(document.getElementById('deviationInput').value) || 3;
+  const scaleFactor = parseFloat(document.getElementById('gannScaleInput').value) || 0.05;
+  const tolerance = parseFloat(document.getElementById('toleranceInput').value) || 0.08;
+  const status = document.getElementById('status');
+
+  try {
+    setStatus('جاري التحليل... ⏳');
+    const data = parseCSV(input);
+    if (!data || data.length < 5) throw new Error("البيانات قليلة أو غير صالحة (احتاج ≥ 5 صفوف).");
+
+    const lastRow = data[data.length - 1];
+    document.getElementById('lastDateDisplay').innerText = lastRow.dateStr || '--';
+    document.getElementById('lastPriceDisplay').innerText = (isFinite(lastRow.close) ? lastRow.close.toLocaleString('ar-EG', {minimumFractionDigits:2, maximumFractionDigits:2}) : '--');
+
+    const zigZagPoints = calculateSmartZigZag(data, deviation);
+    const currentPrice = safeNum(lastRow.close, 0);
+    const currentDate = lastRow.date;
+
+    const harmonic = analyzeHarmonicExtended(zigZagPoints, tolerance);
+    const gann = analyzeGannDeep(zigZagPoints, currentPrice, currentDate, scaleFactor);
+    const elliott = analyzeSmartElliott(zigZagPoints);
+    const fiveZero = detectFiveZeroPattern(zigZagPoints);
+
+    document.getElementById('outputSection').classList.remove('hidden');
+
+    // 1. تعبئة جدول ZigZag بأمان (DOM API)
+    const tableBody = document.getElementById('zigzagTableBody');
+    tableBody.innerHTML = '';
+    const displayPoints = zigZagPoints.slice().reverse().slice(0, 5);
+    displayPoints.forEach((p, i) => {
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-gray-800 transition";
+      const tdDate = document.createElement('td'); tdDate.className = "p-3 text-gray-400"; tdDate.textContent = p.date || p.dateStr || '-';
+      const tdPrice = document.createElement('td'); tdPrice.className = "p-3 font-bold text-gray-300"; tdPrice.textContent = (isFinite(p.price) ? p.price.toFixed(2) : '-');
+      const tdType = document.createElement('td'); tdType.className = "p-3 font-bold " + (p.type && p.type.includes('High') ? 'text-red-400' : 'text-green-400'); tdType.textContent = p.type && p.type.includes('High') ? 'قمة' : 'قاع';
+      const tdChange = document.createElement('td'); tdChange.className = "p-3";
+      const prev = displayPoints[i+1];
+      if (prev && isFinite(prev.price) && isFinite(p.price) && prev.price !== 0) {
+        const pct = ((p.price - prev.price) / prev.price) * 100;
+        const spanPct = document.createElement('span');
+        spanPct.className = pct >= 0 ? 'text-green-400' : 'text-red-400';
+        spanPct.dir = 'ltr';
+        spanPct.textContent = pct.toFixed(2) + '%';
+        tdChange.appendChild(spanPct);
+      } else {
+        tdChange.textContent = '-';
+      }
+      tr.appendChild(tdDate); tr.appendChild(tdPrice); tr.appendChild(tdType); tr.appendChild(tdChange);
+      tableBody.appendChild(tr);
+    });
+
+    // 2. عرض الهارمونيك المتقدم
+    const harmonicBox = document.getElementById('harmonicOutput');
+    // بناء آمن للناتج (محتوى داخلي منسق فقط بعلامات محددة)
+    (function renderHarmonic() {
+      // إزالة محتوى قديم
+      harmonicBox.innerHTML = '';
+      const header = document.createElement('div');
+      header.className = 'flex items-center gap-3 mb-3';
+      const title = document.createElement('span');
+      title.className = 'text-2xl font-bold';
+      title.textContent = harmonic.pattern || '—';
+      const badge = document.createElement('span');
+      badge.className = 'text-xs px-2 py-1 rounded border bg-gray-800 text-gray-400';
+      badge.textContent = harmonic.details || '';
+      header.appendChild(title);
+      header.appendChild(badge);
+      harmonicBox.appendChild(header);
+
+      // أهداف
+      if (fiveZero) {
+        const fdiv = document.createElement('div');
+        fdiv.className = 'flex justify-between items-center bg-yellow-900 bg-opacity-30 p-3 rounded-lg border border-yellow-700 mb-4';
+        fdiv.innerHTML = `
+          <div>
+            <span class="text-yellow-300 font-bold text-lg">${fiveZero.pattern}</span>
+            <div class="text-yellow-400 text-sm">${fiveZero.desc}</div>
+          </div>
+          <span class="font-mono text-xl font-bold text-yellow-300">${isFinite(fiveZero.target) ? fiveZero.target.toFixed(2) : '-'}</span>
+        `;
+        harmonicBox.appendChild(fdiv);
+      }
+
+      if (Array.isArray(harmonic.targets) && harmonic.targets.length > 0) {
+        harmonic.targets.forEach(t => {
+          const card = document.createElement('div');
+          card.className = `flex justify-between items-center ${getPatternColorClass(harmonic.pattern)} p-3 rounded-lg mb-2`;
+          card.innerHTML = `<span class="font-bold ${getPatternTextClass(harmonic.pattern)}">🎯 ${t.label}</span><span class="font-mono text-xl font-bold text-white">${(isFinite(t.price)?t.price.toFixed(2):'-')}</span>`;
+          harmonicBox.appendChild(card);
+        });
+      } else {
+        const empty = document.createElement('div');
+        empty.className = 'text-center py-4 text-gray-400';
+        empty.innerHTML = `<div>لا توجد أهداف حالياً</div><div class="text-sm mt-2">نسبة B/XA: ${(isFinite(harmonic.currentRatio)? (harmonic.currentRatio*100).toFixed(1)+'%':'-')}</div>`;
+        harmonicBox.appendChild(empty);
+      }
+
+      const foot = document.createElement('div');
+      foot.className = 'mt-3 text-sm font-bold text-gray-400 text-center border-t pt-2 border-gray-700';
+      foot.textContent = harmonic.signal || '';
+      harmonicBox.appendChild(foot);
+    })();
+
+    // 3. عرض جان المتقدم
+    const gannBox = document.getElementById('gannDetailedOutput');
+    if (gann) {
+      gannBox.innerHTML = `
+        <div class="bg-orange-900 bg-opacity-20 p-3 rounded-lg border border-orange-800 mb-4 text-sm">
+           <p><span class="font-bold text-orange-300">نقطة الارتكاز:</span> القاع ${gann.base.price.toFixed(2)} في ${gann.base.date}</p>
+           <p><span class="font-bold text-orange-300">الزمن المنقضي:</span> ${gann.base.days} يوم تداول</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+           <div class="border border-gray-700 p-3 rounded-lg bg-gray-800 shadow-sm">
+              <h4 class="text-xs font-bold text-gray-400 mb-2 uppercase">مروحة جان</h4>
+              <div class="space-y-2 text-sm">
+                 <div class="flex justify-between"><span class="text-gray-400">2x1 (حادة):</span> <span class="font-mono font-bold">${gann.fan["2x1"].toFixed(2)}</span></div>
+                 <div class="flex justify-between bg-green-900 bg-opacity-20 p-1 rounded"><span class="text-green-300 font-bold">1x1 (45°):</span> <span class="font-mono font-bold text-green-300">${gann.fan["1x1"].toFixed(2)}</span></div>
+                 <div class="flex justify-between"><span class="text-gray-400">1x2 (بطيئة):</span> <span class="font-mono font-bold">${gann.fan["1x2"].toFixed(2)}</span></div>
+              </div>
+           </div>
+           <div class="border border-gray-700 p-3 rounded-lg bg-gray-800 shadow-sm">
+              <h4 class="text-xs font-bold text-gray-400 mb-2 uppercase">دورة السعر</h4>
+              <div class="space-y-2 text-sm">
+                 <div class="flex justify-between"><span class="text-blue-300 font-bold">360° (دورة):</span> <span class="font-mono font-bold">${gann.sq9.lvl360.toFixed(2)}</span></div>
+                 <div class="flex justify-between"><span class="text-gray-400">180° (نصف):</span> <span class="font-mono font-bold">${gann.sq9.lvl180.toFixed(2)}</span></div>
+              </div>
+           </div>
+        </div>
+        
+        <div class="text-center p-2 rounded-lg font-bold ${gann.statusColor} bg-gray-800 border border-gray-700">
+           الحالة الحالية: ${gann.status}
+        </div>
+      `;
+    } else {
+      gannBox.innerHTML = '<p class="text-red-400">لا يمكن حساب جان (لا يوجد قاع مرجعي)</p>';
+    }
+
+    // 4. الرسم البياني المتقدم
+    if (harmonic && harmonic.points && harmonic.points.length >= 2) {
+      drawAdvancedChart(harmonic, 'advancedChartBox');
+      const ps = document.getElementById('patternStatus');
+      const details = document.getElementById('patternDetails');
+      ps.innerHTML = `
+        ${harmonic.status === 'forming' ? 'قيد التكوين' : 
+          harmonic.status === 'extreme' ? 'نمط خطير!' : 
+          harmonic.status === 'high_precision' ? 'دقة عالية' : 'مكتمل'}
+      `;
+      if (harmonic.status === 'forming') {
+        const prog = document.createElement('div');
+        prog.className = 'wave-progress mt-2';
+        const fill = document.createElement('div');
+        fill.className = 'wave-progress-fill';
+        fill.style.width = ((harmonic.currentRatio || 0) * 100).toFixed(0) + '%';
+        prog.appendChild(fill);
+        ps.appendChild(prog);
+      }
+      details.innerText = harmonic.details || '--';
+    }
+
+    // 5. عرض موجات إليوت الذكية
+    document.getElementById('elliottDetails').innerHTML = displaySmartElliottResults(elliott, currentPrice);
+    
+    if (elliott && elliott.primaryScenario) {
+      document.getElementById('elliottStatus').innerText = `${elliott.primaryScenario.confidence || 0}% ثقة`;
+    } else {
+      document.getElementById('elliottStatus').innerText = "غير متوفر";
+    }
+
+    // 6. التوصية النهائية (الدمج) - استخدام إشارات منطقية وآمنة
+    let finalRec = "";
+    const lastPoint = zigZagPoints[zigZagPoints.length - 1] || null;
+    const isBullishGann = gann && currentPrice > (gann.fan ? gann.fan["1x1"] : -Infinity);
+    const isBullishHarmonic = harmonic && ( (harmonic.targets && harmonic.targets.length > 0 && currentPrice < harmonic.targets[0].price) || (harmonic.pattern && harmonic.pattern.includes('شراء')) );
+    const isBullishElliott = elliott && elliott.primaryScenario && 
+      (elliott.primaryScenario.type && elliott.primaryScenario.type.includes('Impulse') && 
+       elliott.primaryScenario.currentWave && !elliott.primaryScenario.currentWave.includes('انتهت'));
+
+    let bullishSignals = 0;
+    if (isBullishGann) bullishSignals++;
+    if (isBullishHarmonic) bullishSignals++;
+    if (isBullishElliott) bullishSignals++;
+
+    if (fiveZero) bullishSignals += 2;
+
+    if (bullishSignals >= 2) {
+      finalRec = `<div class="flex items-center gap-3"><span class="text-3xl">🟢</span> <div><span class="font-bold text-green-400 text-xl">فرصة شراء قوية</span><p class="text-sm text-gray-400">توافق ${bullishSignals} مؤشر. ${fiveZero ? ' + نمط 5-0' : ''}</p></div></div>`;
+    } else if (bullishSignals === 0) {
+      finalRec = `<div class="flex items-center gap-3"><span class="text-3xl">🔴</span> <div><span class="font-bold text-red-400 text-xl">خروج / بيع</span><p class="text-sm text-gray-400">إشارات سلبية متعددة.</p></div></div>`;
+    } else {
+      finalRec = `<div class="flex items-center gap-3"><span class="text-3xl">⚖️</span> <div><span class="font-bold text-yellow-400 text-xl">مناطق مراقبة</span><p class="text-sm text-gray-400">إشارات متضاربة. ${bullishSignals} مؤشر إيجابي.</p></div></div>`;
+    }
+    
+    document.getElementById('finalDecision').innerHTML = finalRec;
+    setStatus('تم التحليل بنجاح ✅');
+
+  } catch (e) {
+    console.error(e);
+    setStatus("خطأ: " + (e && e.message ? e.message : String(e)));
+  }
+}
+
+// دوال مساعدة للأنماط الجديدة (نفسها لكن مقيدة)
+function getPatternColorClass(pattern) {
+  if (!pattern) return "bg-gray-800";
+  if (pattern.includes("قرش")) return "bg-cyan-900 bg-opacity-20";
+  if (pattern.includes("سيفر")) return "bg-teal-900 bg-opacity-20";
+  if (pattern.includes("5-0")) return "bg-yellow-900 bg-opacity-30";
+  if (pattern.includes("خفاش")) return "bg-purple-900 bg-opacity-20";
+  if (pattern.includes("جارتلي")) return "bg-blue-900 bg-opacity-20";
+  if (pattern.includes("فراشة")) return "bg-indigo-900 bg-opacity-20";
+  if (pattern.includes("سلطعون")) return "bg-pink-900 bg-opacity-20";
+  return "bg-gray-800";
+}
+
+function getPatternBorderClass(pattern) {
+  if (!pattern) return "border-gray-700";
+  if (pattern.includes("قرش")) return "border-cyan-700";
+  if (pattern.includes("سيفر")) return "border-teal-700";
+  if (pattern.includes("5-0")) return "border-yellow-700";
+  if (pattern.includes("خفاش")) return "border-purple-700";
+  if (pattern.includes("جارتلي")) return "border-blue-700";
+  if (pattern.includes("فراشة")) return "border-indigo-700";
+  if (pattern.includes("سلطعون")) return "border-pink-700";
+  return "border-gray-700";
+}
+
+function getPatternTextClass(pattern) {
+  if (!pattern) return "text-gray-300";
+  if (pattern.includes("قرش")) return "text-cyan-300";
+  if (pattern.includes("سيفر")) return "text-teal-300";
+  if (pattern.includes("5-0")) return "text-yellow-300";
+  if (pattern.includes("خفاش")) return "text-purple-300";
+  if (pattern.includes("جارتلي")) return "text-blue-300";
+  if (pattern.includes("فراشة")) return "text-indigo-300";
+  if (pattern.includes("سلطعون")) return "text-pink-300";
+  return "text-gray-300";
+}
+</script>
+</body>
+</html>
